@@ -206,7 +206,11 @@ func (c *TCPConn) Read(b []byte) (int, error) {
 		c.Close()
 		return hLength, ErrLessThanZeroBytesReadHeader
 	}
-
+	if msgLength < 0 {
+		//Invalid length
+		c.Close()
+		return hLength, ErrLessThanZeroBytesReadHeader
+	}
 	// Using the header, read the remaining body
 	bLength, err := c.lowLevelRead(b[:msgLength])
 	if err != nil {

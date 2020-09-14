@@ -178,9 +178,9 @@ func (t *TCPListener) readLoop(conn *TCPConn) {
 		// since we re-use the cache
 		if err = t.callback(dataBuffer[:msgLen], conn); err != nil && t.enableLogging {
 			log.Printf("Error in Callback: %s", err.Error())
-			// TODO if it's a protobuffs error, it means we likely had an issue and can't
-			// deserialize data? Should we kill the connection and have the client start over?
-			// At this point, there isn't a reliable recovery mechanic for the server
+			//If the handler returns an error its possible we are out of sync, kill the connection and exit
+			conn.Close()
+			return
 		}
 	}
 }

@@ -11,7 +11,7 @@ import (
 // size header, meaning you can directly serialize the raw slice. You would then perform your
 // custom logic for interpretting the message, before returning. You can optionally
 // return an error, which in turn will be logged if EnableLogging is set to true.
-type ListenCallback func([]byte) error
+type ListenCallback func([]byte, *TCPConn) error
 
 // TCPListener represents the abstraction over a raw TCP socket for reading streaming
 // protocolbuffer data without having to write a ton of boilerplate
@@ -176,7 +176,7 @@ func (t *TCPListener) readLoop(conn *TCPConn) {
 		}
 		// We take action on the actual message data - but only up to the amount of bytes read,
 		// since we re-use the cache
-		if err = t.callback(dataBuffer[:msgLen]); err != nil && t.enableLogging {
+		if err = t.callback(dataBuffer[:msgLen], conn); err != nil && t.enableLogging {
 			log.Printf("Error in Callback: %s", err.Error())
 			// TODO if it's a protobuffs error, it means we likely had an issue and can't
 			// deserialize data? Should we kill the connection and have the client start over?

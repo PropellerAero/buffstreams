@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/StabbyCutyou/buffstreams"
-	"github.com/StabbyCutyou/buffstreams/test/message"
-	"github.com/golang/protobuf/proto"
+	"github.com/PropellerAero/buffstreams"
+	"github.com/PropellerAero/buffstreams/test/message"
+	"google.golang.org/protobuf/proto"
 )
 
 // Test client to send a sample payload of data endlessly

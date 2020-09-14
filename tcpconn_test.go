@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/StabbyCutyou/buffstreams/test/message"
-	"github.com/golang/protobuf/proto"
+	"github.com/PropellerAero/buffstreams/test/message"
+	"google.golang.org/protobuf/proto"
 )
 
-func exampleCallback(bts []byte) error {
+func exampleCallback(bts []byte, _ *TCPConn) error {
 	msg := &message.Note{}
 	err := proto.Unmarshal(bts, msg)
 	return err
@@ -94,7 +94,7 @@ func TestDialBuffTCPUsesDefaultMessageSize(t *testing.T) {
 	}
 	buffM, err := DialTCP(&cfg)
 	if err != nil {
-		t.Errorf("Failed to open connection to %d: %s", cfg.Address, err)
+		t.Errorf("Failed to open connection to %v: %s", cfg.Address, err)
 	}
 	if buffM.maxMessageSize != DefaultMaxMessageSize {
 		t.Errorf("Expected Max Message Size to be %d, actually got %d", DefaultMaxMessageSize, buffM.maxMessageSize)
@@ -108,7 +108,7 @@ func TestDialBuffTCPUsesSpecifiedMaxMessageSize(t *testing.T) {
 	}
 	conn, err := DialTCP(&cfg)
 	if err != nil {
-		t.Errorf("Failed to open connection to %d: %s", cfg.Address, err)
+		t.Errorf("Failed to open connection to %v: %s", cfg.Address, err)
 	}
 	if conn.maxMessageSize != cfg.MaxMessageSize {
 		t.Errorf("Expected Max Message Size to be %d, actually got %d", cfg.MaxMessageSize, conn.maxMessageSize)

@@ -5,14 +5,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/StabbyCutyou/buffstreams"
-	"github.com/StabbyCutyou/buffstreams/test/message"
-	"github.com/golang/protobuf/proto"
+	"github.com/PropellerAero/buffstreams"
+	"github.com/PropellerAero/buffstreams/test/message"
+	"google.golang.org/protobuf/proto"
 )
 
 // TestCallback is a simple server for test purposes. It has a single callback,
 // which is to unmarshall some data and log it.
-func (t *testController) TestCallback(bts []byte) error {
+func (t *testController) TestCallback(bts []byte, _ *buffstreams.TCPConn) error {
 	msg := &message.Note{}
 	err := proto.Unmarshal(bts, msg)
 	if t.enableLogging {

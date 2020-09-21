@@ -49,7 +49,7 @@ func newTCPConn(cfg *TCPConnConfig) (*TCPConn, error) {
 		maxMessageSize = cfg.MaxMessageSize
 	}
 
-	headerByteSize := messageSizeToBitLength(maxMessageSize)
+	headerByteSize := 4 //Always use uint32_t
 
 	return &TCPConn{
 		maxMessageSize:       maxMessageSize,

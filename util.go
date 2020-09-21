@@ -9,10 +9,10 @@ func byteArrayToUInt32(bytes []byte) (result uint64, bytesRead int) {
 	return binary.Uvarint(bytes)
 }
 
-func intToByteArray(value int64, bufferSize int) []byte {
+func intToByteArray(value uint64, bufferSize int) []byte {
 	toWriteLen := make([]byte, bufferSize)
-	binary.PutVarint(toWriteLen, value)
-	return toWriteLen
+	bytesused := binary.PutUvarint(toWriteLen, value)
+	return toWriteLen[:bytesused]
 }
 
 // Formula for taking size in bytes and calculating # of bits to express that size

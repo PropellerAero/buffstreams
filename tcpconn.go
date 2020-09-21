@@ -119,7 +119,10 @@ func (c *TCPConn) Close() error {
 func (c *TCPConn) Write(data []byte) (int, error) {
 	// Calculate how big the message is, using a consistent header size.
 	// Append the size to the message, so now it has a header
-	c.outgoingDataBuffer = append(intToByteArray(int64(len(data)), c.headerByteSize), data...)
+	// encode the outgoing length
+	header := intToByteArray(uint64(len(data)), 4)
+
+	c.outgoingDataBuffer = append(header, data...)
 
 	toWriteLen := len(c.outgoingDataBuffer)
 

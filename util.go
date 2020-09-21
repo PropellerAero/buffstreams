@@ -5,8 +5,8 @@ import (
 	"math"
 )
 
-func byteArrayToUInt32(bytes []byte) (result int64, bytesRead int) {
-	return binary.Varint(bytes)
+func byteArrayToUInt32(bytes []byte) (result uint64, bytesRead int) {
+	return binary.Uvarint(bytes)
 }
 
 func intToByteArray(value int64, bufferSize int) []byte {

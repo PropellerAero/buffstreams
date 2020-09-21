@@ -2,6 +2,7 @@ package buffstreams
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"sync"
@@ -49,7 +50,7 @@ func newTCPConn(cfg *TCPConnConfig) (*TCPConn, error) {
 		maxMessageSize = cfg.MaxMessageSize
 	}
 
-	headerByteSize := 4 //Always use uint32_t
+	headerByteSize := 4
 
 	return &TCPConn{
 		maxMessageSize:       maxMessageSize,
@@ -197,6 +198,8 @@ func (c *TCPConn) Read(b []byte) (int, error) {
 	}
 	// Decode it
 	msgLength, bytesParsed := byteArrayToUInt32(c.incomingHeaderBuffer)
+	fmt.Printf("Parsed as %d bytes from %d bytes, %d\n", msgLength, bytesParsed, len(c.incomingHeaderBuffer))
+	fmt.Printf("Parsed %02X%02X%02X%02X\n", c.incomingHeaderBuffer[0], c.incomingHeaderBuffer[1], c.incomingHeaderBuffer[2], c.incomingHeaderBuffer[3])
 	if bytesParsed == 0 {
 		// "Buffer too small"
 		c.Close()
@@ -212,9 +215,17 @@ func (c *TCPConn) Read(b []byte) (int, error) {
 		return hLength, ErrLessThanZeroBytesReadHeader
 	}
 	// Using the header, read the remaining body
-	bLength, err := c.lowLevelRead(b[:msgLength])
+	//Copy in any unused bytes from the header
+	unusedBytes := hLength - bytesParsed
+	if unusedBytes > 0 {
+		copy(b, c.incomingHeaderBuffer[bytesParsed:])
+	}
+	bLength, err := c.lowLevelRead(b[unusedBytes:int(msgLength)])
 	if err != nil {
+		fmt.Printf("Error in socket read %v", err)
 		c.Close()
 	}
-	return bLength, err
+	fmt.Printf("Read %v %v %02X%02X%02X%02X\n", msgLength, bLength, b[0], b[1], b[2], b[3])
+
+	return int(msgLength), err
 }

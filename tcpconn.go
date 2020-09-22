@@ -201,8 +201,8 @@ func (c *TCPConn) Read(b []byte) (int, error) {
 	}
 	// Decode it
 	msgLength, bytesParsed := byteArrayToUInt32(c.incomingHeaderBuffer)
-	fmt.Printf("Parsed as %d bytes from %d bytes, %d\n", msgLength, bytesParsed, len(c.incomingHeaderBuffer))
-	fmt.Printf("Parsed %02X%02X%02X%02X\n", c.incomingHeaderBuffer[0], c.incomingHeaderBuffer[1], c.incomingHeaderBuffer[2], c.incomingHeaderBuffer[3])
+	// fmt.Printf("Parsed as %d bytes from %d bytes, %d\n", msgLength, bytesParsed, len(c.incomingHeaderBuffer))
+	// fmt.Printf("Parsed %02X%02X%02X%02X\n", c.incomingHeaderBuffer[0], c.incomingHeaderBuffer[1], c.incomingHeaderBuffer[2], c.incomingHeaderBuffer[3])
 	if bytesParsed == 0 {
 		// "Buffer too small"
 		c.Close()
@@ -223,12 +223,12 @@ func (c *TCPConn) Read(b []byte) (int, error) {
 	if unusedBytes > 0 {
 		copy(b, c.incomingHeaderBuffer[bytesParsed:])
 	}
-	bLength, err := c.lowLevelRead(b[unusedBytes:int(msgLength)])
+	_, err = c.lowLevelRead(b[unusedBytes:int(msgLength)])
 	if err != nil {
 		fmt.Printf("Error in socket read %v", err)
 		c.Close()
 	}
-	fmt.Printf("Read %v %v %02X%02X%02X%02X\n", msgLength, bLength, b[0], b[1], b[2], b[3])
+	// fmt.Printf("Read %v %v %02X%02X%02X%02X\n", msgLength, bLength, b[0], b[1], b[2], b[3])
 
 	return int(msgLength), err
 }
